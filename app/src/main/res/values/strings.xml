@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+    <string name="movie_poster">Movie Poster</string>
+    <string name="error_message">Unable to fetch data, please try again</string>
+    <string name="settings">Settings</string>
+    <string name="details">Movie Details</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_sort_type">Sort By</string>
+    <string name="pref_sort_type_key">sort_by</string>
+
+    <string-array name="pref_sort_type_titles">
+        <item>Popularity</item>
+        <item>Top Rated</item>
+    </string-array>
+
+    <string-array name="pref_sort_type_values">
+        <item>popular</item>
+        <item>top_rated</item>
+    </string-array>
+
+    <string name="pref_sort_type_default_value">popular</string>
+</resources>
