@@ -3,25 +3,22 @@ package com.example.android.popularmovies;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler, MovieAsyncTask.MovieAsyncTaskActivityStates {
 
     private MoviesAdapter mMoviesAdapter; //adapter used in recycler view
     RecyclerView mMoviesRecyclerView; //recycler view
@@ -32,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     ArrayList<Movie> movies = null; // list of movies
     int position = 0; // current scroll position of recycler view
     int spanCount; // number of columns in grid layout
+    private ProgressBar mLoadingIndicator; // loading indicator that is visible when data is loading
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         setContentView(R.layout.activity_main);
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
         mErrorTextView = findViewById(R.id.tv_error_text);
+        mLoadingIndicator = findViewById(R.id.pb_loader);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
             spanCount = 2;
         else
@@ -70,14 +69,15 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         position = savedInstanceState.getInt("position");
-        mMoviesRecyclerView.smoothScrollToPosition(position - spanCount);
+        int finalPosition = position - spanCount;
+        mMoviesRecyclerView.smoothScrollToPosition(finalPosition < 0 ? 0 : finalPosition);
     }
 
     /**
      * Returns a new {@link RecyclerView.OnScrollListener}
      *
      * @return OnScrollListener
-     * */
+     */
     private RecyclerView.OnScrollListener createInfiniteScrollListener() {
         return new RecyclerView.OnScrollListener() {
             @Override
@@ -120,14 +120,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
      * Loads movies for a specific page
      *
      * @param pageNo which page number to fetch data for
-     * */
+     */
     void loadMovies(int pageNo) {
         isLoading = true;
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String sortBy = sharedPrefs.getString(getString(R.string.pref_sort_type_key), getString(R.string.pref_sort_type_default_value));
         URL url = NetworkUtils.buildUrl(sortBy, pageNo);
         if (NetworkUtils.isOnline(this)) {
-            new MovieAsyncTask().execute(url);
+            new MovieAsyncTask(this).execute(url);
         } else {
             showErrorMessage();
         }
@@ -140,53 +140,31 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         startActivity(details);
     }
 
-    /**
-     * Method to make the data visible and hide the error message
-     */
-    void showMovieList() {
+    @Override
+    public void showMovieList() {
         mMoviesRecyclerView.setVisibility(View.VISIBLE);
         mErrorTextView.setVisibility(View.GONE);
     }
 
-    /**
-     * Method to make the error visible and hide the recycler view
-     */
-    void showErrorMessage() {
+    @Override
+    public void showErrorMessage() {
         mMoviesRecyclerView.setVisibility(View.GONE);
         mErrorTextView.setVisibility(View.VISIBLE);
     }
 
-    private class MovieAsyncTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
-        ProgressBar mLoadingProgressBar;
+    @Override
+    public void isLoading() {
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
 
-        @Override
-        protected void onPreExecute() {
-            mLoadingProgressBar = findViewById(R.id.pb_loader);
-            mLoadingProgressBar.setVisibility(View.VISIBLE);
-            showMovieList();
-        }
+    @Override
+    public void isLoaded() {
+        mLoadingIndicator.setVisibility(View.GONE);
+        isLoading = false;
+    }
 
-        @Override
-        protected ArrayList<Movie> doInBackground(URL... urls) {
-            ArrayList<Movie> movieNames = new ArrayList<>();
-            try {
-                String jsonResponse = NetworkUtils.getResponseFromHttpUrl(urls[0]);
-                movieNames = NetworkUtils.extractJSONResponse(jsonResponse);
-            } catch (IOException e) {
-                Log.e("MovieAsyncTask", "Error opening connection: " + e.getMessage());
-            }
-            return movieNames;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Movie> movies) {
-            isLoading = false;
-            mLoadingProgressBar.setVisibility(View.GONE);
-            if (movies.size() != 0) {
-                mMoviesAdapter.setOrAddMoviesData(movies);
-            } else {
-                showErrorMessage();
-            }
-        }
+    @Override
+    public void setAdapterData(ArrayList<Movie> data) {
+        mMoviesAdapter.setOrAddMoviesData(data);
     }
 }

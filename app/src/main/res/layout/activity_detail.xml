@@ -76,18 +76,10 @@
             android:id="@+id/tv_overview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingBottom="10dp"
             android:textSize="18sp"
             tools:text="Overview" />
-
-        <ProgressBar
-            android:id="@+id/pb_detail_loader"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
     </LinearLayout>
 </ScrollView>

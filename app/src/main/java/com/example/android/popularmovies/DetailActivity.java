@@ -13,7 +13,6 @@ public class DetailActivity extends AppCompatActivity {
 
     TextView mMovieTitleTextView, mRatingTextView, mOverviewTextView, mReleaseYear;
     ImageView mMoviePosterImageView;
-    ProgressBar mDetailLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +23,6 @@ public class DetailActivity extends AppCompatActivity {
         mRatingTextView = findViewById(R.id.tv_rating);
         mOverviewTextView = findViewById(R.id.tv_overview);
         mReleaseYear = findViewById(R.id.tv_year);
-        mDetailLoader = findViewById(R.id.pb_detail_loader);
         Intent callerIntent = getIntent();
         if (callerIntent.hasExtra("movie")) {
             Movie movie = callerIntent.getParcelableExtra("movie");
