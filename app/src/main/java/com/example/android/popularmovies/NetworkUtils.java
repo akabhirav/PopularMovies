@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 class NetworkUtils {
     private static final String TAG = "NetworkUtils";
+    static final String BAD_RESPONSE = "BAD_RESPONSE";
 
     /**
      * Method that returns the url for fetching a list of movies from tmdb
@@ -74,6 +75,7 @@ class NetworkUtils {
                 }
                 jsonResponse = result.toString();
             } else {
+                jsonResponse = BAD_RESPONSE;
                 Log.e(TAG, "Bad Response: " + urlConnection.getResponseCode());
             }
 
