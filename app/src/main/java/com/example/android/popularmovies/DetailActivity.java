@@ -44,7 +44,7 @@ public class DetailActivity extends AppCompatActivity {
         String[] releaseDates = movie.getReleaseDate().split("-");
         String releaseYear = releaseDates[0];
         mReleaseYear.setText(releaseYear);
-        String rating = movie.getVoteAverage() + " / 10";
+        String rating = Double.toString(movie.getVoteAverage()) + " / 10";
         mRatingTextView.setText(rating);
         mOverviewTextView.setText(movie.getOverview());
     }
