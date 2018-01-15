@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.utilities;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,6 +6,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.example.android.popularmovies.Constants;
+import com.example.android.popularmovies.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +33,7 @@ public class NetworkUtils {
      * @param sortType type of sorting with which to make the URL
      * @return final url
      */
-    static URL buildUrl(String sortType, int pageNo) {
+    public static URL buildUrl(String sortType, int pageNo) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(Constants.HTTPS).path(Constants.BASE_URL).appendPath(sortType).appendQueryParameter("api_key", Constants.API_KEY).appendQueryParameter("page", String.valueOf(pageNo));
         Uri uri = builder.build();
@@ -49,7 +52,7 @@ public class NetworkUtils {
      * @param imageCode unique image code from tmdb
      * @return full image url
      */
-    static String buildImageURL(String imageCode) {
+    public static String buildImageURL(String imageCode) {
         return "https://image.tmdb.org/t/p/w500/" + imageCode;
     }
 
@@ -91,7 +94,7 @@ public class NetworkUtils {
      * Method to extract a list of movies with only id, title, and image url from json
      *
      * @param jsonResponse json string which contains the data
-     * @return returns an {@link ArrayList<Movie>}
+     * @return returns an {@link ArrayList< Movie >}
      */
     public static ArrayList<Movie> extractJSONResponse(String jsonResponse) {
         ArrayList<Movie> movieNames = new ArrayList<>();
@@ -118,7 +121,7 @@ public class NetworkUtils {
      * @param context context from where it is called
      * @return whether the device is online or not
      */
-    static boolean isOnline(Context context) {
+    public static boolean isOnline(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

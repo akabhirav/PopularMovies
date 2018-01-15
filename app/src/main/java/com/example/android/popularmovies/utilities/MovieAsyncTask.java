@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.android.popularmovies.Movie;
-import com.example.android.popularmovies.NetworkUtils;
 
 import java.io.IOException;
 import java.net.URL;

@@ -19,7 +19,7 @@ public class Movie implements Parcelable {
      * @param overview synopsis of the movie
      * @param voteAverage rating of the movie*
      * */
-    Movie(int id, String title, String imageUrl, String releaseDate, String overview, double voteAverage) {
+    public Movie(int id, String title, String imageUrl, String releaseDate, String overview, double voteAverage) {
         this.title = title;
         this.imageUrl = imageUrl;
         this.id = id;
