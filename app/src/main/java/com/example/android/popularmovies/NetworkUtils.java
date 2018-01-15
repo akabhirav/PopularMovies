@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-class NetworkUtils {
+public class NetworkUtils {
     private static final String TAG = "NetworkUtils";
     static final String BAD_RESPONSE = "BAD_RESPONSE";
 
@@ -61,7 +61,7 @@ class NetworkUtils {
      * @throws IOException exception thrown when error opening connection
      */
     @Nullable
-    static String getResponseFromHttpUrl(URL url) throws IOException {
+    public static String getResponseFromHttpUrl(URL url) throws IOException {
         String jsonResponse = null;
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
@@ -93,7 +93,7 @@ class NetworkUtils {
      * @param jsonResponse json string which contains the data
      * @return returns an {@link ArrayList<Movie>}
      */
-    static ArrayList<Movie> extractJSONResponse(String jsonResponse) {
+    public static ArrayList<Movie> extractJSONResponse(String jsonResponse) {
         ArrayList<Movie> movieNames = new ArrayList<>();
         try {
             JSONObject response = new JSONObject(jsonResponse);
