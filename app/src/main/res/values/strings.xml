@@ -20,4 +20,7 @@
     </string-array>
 
     <string name="pref_sort_type_default_value">popular</string>
+    <string name="mark_as_favourite">Mark as favourite</string>
+    <string name="play_trailer">Play trailer</string>
+    <string name="trailers">Trailers</string>
 </resources>

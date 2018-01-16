@@ -39,13 +39,9 @@ public class MovieProvider extends ContentProvider {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            case CODE_MOVIE:
-                retCursor = db.query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
-                break;
             case CODE_MOVIE_WITH_ID:
-                selection = "_id=?";
-                String id = uri.getPathSegments().get(1);
-                selectionArgs = new String[]{id};
+                selection = "tmdb_id=?";
+                selectionArgs = new String[]{uri.getPathSegments().get(1)};
                 retCursor = db.query(MovieEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
                 break;
             default:
@@ -58,27 +54,6 @@ public class MovieProvider extends ContentProvider {
     @Override
     public String getType(@NonNull Uri uri) {
         return null;
-    }
-
-    @Override
-    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        int rowsInserted = 0;
-        switch (sUriMatcher.match(uri)) {
-            case CODE_MOVIE:
-                db.beginTransaction();
-                for (ContentValues value : values) {
-                    db.insert(MovieEntry.TABLE_NAME, null, value);
-                }
-                rowsInserted = values.length;
-                db.setTransactionSuccessful();
-                db.endTransaction();
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri " + uri);
-        }
-        getContext().getContentResolver().notifyChange(uri, null);
-        return rowsInserted;
     }
 
     @Nullable
@@ -99,27 +74,22 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
-    }
-
-    @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        int rowsUpdated;
+        int rowsDeleted;
         switch (sUriMatcher.match(uri)) {
-            case CODE_MOVIE:
-                rowsUpdated = db.update(MovieEntry.TABLE_NAME, values, selection, selectionArgs);
-                break;
             case CODE_MOVIE_WITH_ID:
-                selection = "_id=?";
-                String id = uri.getPathSegments().get(1);
-                selectionArgs = new String[]{id};
-                rowsUpdated = db.update(MovieEntry.TABLE_NAME, values, selection, selectionArgs);
+                selection = "tmdb_id=?";
+                selectionArgs = new String[]{uri.getPathSegments().get(1)};
+                rowsDeleted = db.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
-        return rowsUpdated;
+        return rowsDeleted;
+    }
+
+    @Override
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+        return 0;
     }
 }

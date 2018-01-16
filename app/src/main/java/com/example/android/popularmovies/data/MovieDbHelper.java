@@ -17,14 +17,9 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + MovieEntry.TABLE_NAME + "(" +
-                        MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        MovieEntry.COLUMN_TMDB_ID + " INTEGER UNIQUE NOT NULL," +
-                        MovieEntry.COLUMN_TITLE + " TEXT NOT NULL," +
-                        MovieEntry.COLUMN_OVERVIEW + " TEXT NOT NULL," +
-                        MovieEntry.COLUMN_IMAGE + " TEXT NOT NULL," +
-                        MovieEntry.COLUMN_RATING + " REAL NOT NULL," +
-                        MovieEntry.COLUMN_RELEASE_DATE + " DATE NOT NULL," +
-                        MovieEntry.COLUMN_FAVOURITE + " BOOLEAN NOT NULL DEFAULT 0" +
+                MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieEntry.COLUMN_TMDB_ID + " INTEGER UNIQUE NOT NULL," +
+                "UNIQUE(" + MovieEntry.COLUMN_TMDB_ID + ") ON CONFLICT IGNORE" +
                 ")");
     }
 

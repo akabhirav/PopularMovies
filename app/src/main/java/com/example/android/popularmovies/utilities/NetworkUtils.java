@@ -23,6 +23,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static com.example.android.popularmovies.Constants.PATH_VIDEOS;
+
 public class NetworkUtils {
     private static final String TAG = "NetworkUtils";
     static final String BAD_RESPONSE = "BAD_RESPONSE";
@@ -54,6 +56,24 @@ public class NetworkUtils {
      */
     public static String buildImageURL(String imageCode) {
         return "https://image.tmdb.org/t/p/w500/" + imageCode;
+    }
+
+    public static URL buildTrailerUrl(int movieId) {
+        Uri.Builder builder = new Uri.Builder();
+        builder
+                .scheme(Constants.HTTPS)
+                .path(Constants.BASE_URL)
+                .appendPath(String.valueOf(movieId))
+                .appendPath(Constants.PATH_VIDEOS)
+                .appendQueryParameter("api_key", Constants.API_KEY);
+        Uri uri = builder.build();
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "MalformedURL: " + e.toString());
+        }
+        return url;
     }
 
     /**
@@ -117,6 +137,25 @@ public class NetworkUtils {
         return movieNames;
     }
 
+    public static ArrayList<String> extractVideosJSONResponse(String jsonResponse){
+        ArrayList<String> videoKeys = new ArrayList<>();
+        try {
+            JSONObject response = new JSONObject(jsonResponse);
+            JSONArray results = response.getJSONArray("results");
+            for(int i = 0; i < results.length(); i++) {
+                JSONObject result = (JSONObject) results.get(i);
+
+                String site = result.getString("site");
+                switch (site){
+                    case "YouTube":
+                        videoKeys.add(result.getString("key"));
+                }
+            }
+        } catch (JSONException e){
+            Log.e(TAG, "JSON Error: " + e.getMessage());
+        }
+        return videoKeys;
+    }
     /**
      * @param context context from where it is called
      * @return whether the device is online or not

@@ -21,7 +21,9 @@ import com.example.android.popularmovies.utilities.NetworkUtils;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler, MovieAsyncTask.MovieAsyncTaskActivityStates {
+public class MainActivity extends AppCompatActivity implements
+        MoviesAdapter.MoviesAdapterOnClickHandler,
+        MovieAsyncTask.MovieAsyncTaskActivityStates {
 
     private MoviesAdapter mMoviesAdapter; //adapter used in recycler view
     RecyclerView mMoviesRecyclerView; //recycler view
