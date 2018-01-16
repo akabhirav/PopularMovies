@@ -39,6 +39,9 @@ public class MovieProvider extends ContentProvider {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
+            case CODE_MOVIE:
+                retCursor = db.query(MovieEntry.TABLE_NAME, null, null, null, null, null, null);
+                break;
             case CODE_MOVIE_WITH_ID:
                 selection = "tmdb_id=?";
                 selectionArgs = new String[]{uri.getPathSegments().get(1)};

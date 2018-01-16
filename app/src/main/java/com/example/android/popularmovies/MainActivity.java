@@ -1,8 +1,14 @@
 package com.example.android.popularmovies;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.nfc.cardemulation.OffHostApduService;
+import android.support.v4.app.LoaderManager;
 import android.content.Intent;
+import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +21,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.data.MoviesContract;
 import com.example.android.popularmovies.utilities.MovieAsyncTask;
+import com.example.android.popularmovies.utilities.MovieCursorLoader;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 
 import java.net.URL;
@@ -23,7 +31,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
         MoviesAdapter.MoviesAdapterOnClickHandler,
-        MovieAsyncTask.MovieAsyncTaskActivityStates {
+        MovieAsyncTask.MovieAsyncTaskActivityStates,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private MoviesAdapter mMoviesAdapter; //adapter used in recycler view
     RecyclerView mMoviesRecyclerView; //recycler view
@@ -35,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements
     int position = 0; // current scroll position of recycler view
     int spanCount; // number of columns in grid layout
     private ProgressBar mLoadingIndicator; // loading indicator that is visible when data is loading
+    private final static int FAVOURITE_LOADER_ID = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,10 +142,26 @@ public class MainActivity extends AppCompatActivity implements
         String sortBy = sharedPrefs.getString(getString(R.string.pref_sort_type_key), getString(R.string.pref_sort_type_default_value));
         URL url = NetworkUtils.buildUrl(sortBy, pageNo);
         if (NetworkUtils.isOnline(this)) {
+            hideOfflineMessage();
             new MovieAsyncTask(this).execute(url);
         } else {
-            showErrorMessage();
+            if(pageNo == 1){
+                getSupportLoaderManager().initLoader(FAVOURITE_LOADER_ID, null, this);
+                showOfflineMessage();
+            }
         }
+    }
+
+    void hideOfflineMessage(){
+        TextView offlineMessage =  findViewById(R.id.tv_offline);
+        offlineMessage.setVisibility(View.GONE);
+        mMoviesRecyclerView.setPadding(0 , 0, 0 , 0);
+    }
+
+    void showOfflineMessage(){
+        TextView offlineMessage =  findViewById(R.id.tv_offline);
+        offlineMessage.setVisibility(View.VISIBLE);
+        mMoviesRecyclerView.setPadding(0 , 100, 0 , 0);
     }
 
     @Override
@@ -171,5 +197,35 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void setAdapterData(ArrayList<Movie> data) {
         mMoviesAdapter.setOrAddMoviesData(data);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new MovieCursorLoader(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        ArrayList<Movie> arrayList =new ArrayList<>();
+        int length = data.getCount();
+        for (int i = 0; i < length; i++) {
+            data.moveToPosition(i);
+            int id = data.getInt(data.getColumnIndex(MoviesContract.MovieEntry.COLUMN_TMDB_ID));
+            String title = data.getString(data.getColumnIndex(MoviesContract.MovieEntry.COLUMN_TITLE));
+            String url = data.getString(data.getColumnIndex(MoviesContract.MovieEntry.COLUMN_IMAGE));
+            String releaseDate = data.getString(data.getColumnIndex(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE));
+            String overview = data.getString(data.getColumnIndex(MoviesContract.MovieEntry.COLUMN_OVERVIEW));
+            double rating = data.getDouble(data.getColumnIndex(MoviesContract.MovieEntry.COLUMN_RATING));
+            Movie movie = new Movie(id, title, url, releaseDate, overview, rating);
+            arrayList.add(movie);
+        }
+        if(mMoviesAdapter.getMoviesData() == null){
+            mMoviesAdapter.setOrAddMoviesData(arrayList);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

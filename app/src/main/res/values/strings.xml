@@ -24,4 +24,5 @@
     <string name="play_trailer">Play trailer</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+    <string name="offline_message">Looks like you are offline, here are your favourite movies. Get back online to see more</string>
 </resources>
