@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import com.example.android.popularmovies.data.MoviesContract;
 import com.example.android.popularmovies.utilities.NetworkUtils;
+import com.example.android.popularmovies.utilities.ReviewsAdapter;
+import com.example.android.popularmovies.utilities.ReviewsLoader;
 import com.example.android.popularmovies.utilities.TrailerAdapter;
 import com.example.android.popularmovies.utilities.TrailersLoader;
 import com.squareup.picasso.Picasso;
@@ -31,9 +33,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     ImageView mMoviePosterImageView;
     Button mMarkFavourite;
     Boolean isFavourite;
-    RecyclerView mTrailersRecyclerView;
+    RecyclerView mTrailersRecyclerView, mReviewsRecyclerView;
     TrailerAdapter mTrailersAdapter;
+    ReviewsAdapter mReviewsAdapter;
     static final int TRAILER_LOADER_ID = 1;
+    static final int REVIEWS_LOADER_ID = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mReleaseYear = findViewById(R.id.tv_year);
         mMarkFavourite = findViewById(R.id.b_favourite);
         mTrailersRecyclerView = findViewById(R.id.rv_trailers);
+        mReviewsRecyclerView = findViewById(R.id.rv_reviews);
         Intent callerIntent = getIntent();
         if (callerIntent.hasExtra("movie")) {
             final Movie movie = callerIntent.getParcelableExtra("movie");
@@ -70,6 +75,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 Bundle args = new Bundle();
                 args.putInt("movie_id", movie.getId());
                 getSupportLoaderManager().initLoader(TRAILER_LOADER_ID, args, this).forceLoad();
+                getSupportLoaderManager().initLoader(REVIEWS_LOADER_ID, args, this).forceLoad();
             }
         }
     }
@@ -113,17 +119,32 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
-        return new TrailersLoader(this, args.getInt("movie_id"));
+        switch (id) {
+            case TRAILER_LOADER_ID:
+                return new TrailersLoader(this, args.getInt("movie_id"));
+            case REVIEWS_LOADER_ID:
+                return new ReviewsLoader(this, args.getInt("movie_id"));
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mTrailersRecyclerView.setLayoutManager(layoutManager);
-        mTrailersRecyclerView.setHasFixedSize(true);
-        mTrailersAdapter = new TrailerAdapter(data);
-        mTrailersRecyclerView.setAdapter(mTrailersAdapter);
-        mTrailersRecyclerView.setNestedScrollingEnabled(true);
+        if(loader instanceof TrailersLoader){
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mTrailersRecyclerView.setLayoutManager(layoutManager);
+            mTrailersRecyclerView.setHasFixedSize(true);
+            mTrailersAdapter = new TrailerAdapter(data);
+            mTrailersRecyclerView.setAdapter(mTrailersAdapter);
+        } else {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mReviewsRecyclerView.setLayoutManager(layoutManager);
+            mReviewsRecyclerView.setHasFixedSize(true);
+            mReviewsAdapter = new ReviewsAdapter(data);
+            mReviewsRecyclerView.setAdapter(mReviewsAdapter);
+        }
+
     }
 
     @Override

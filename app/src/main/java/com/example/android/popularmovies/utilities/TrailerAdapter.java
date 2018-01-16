@@ -18,7 +18,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     public TrailerAdapter(ArrayList<String> urls) {
         videoIds = urls;
-        notifyDataSetChanged();
     }
 
     @Override

@@ -76,6 +76,24 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildReviewUrl(int movieId) {
+        Uri.Builder builder = new Uri.Builder();
+        builder
+                .scheme(Constants.HTTPS)
+                .path(Constants.BASE_URL)
+                .appendPath(String.valueOf(movieId))
+                .appendPath(Constants.PATH_REVIEWS)
+                .appendQueryParameter("api_key", Constants.API_KEY);
+        Uri uri = builder.build();
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "MalformedURL: " + e.toString());
+        }
+        return url;
+    }
+
     /**
      * Method that fetches response from url and returns the response
      *
@@ -84,7 +102,7 @@ public class NetworkUtils {
      * @throws IOException exception thrown when error opening connection
      */
     @Nullable
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
+    static String getResponseFromHttpUrl(URL url) throws IOException {
         String jsonResponse = null;
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
@@ -116,7 +134,7 @@ public class NetworkUtils {
      * @param jsonResponse json string which contains the data
      * @return returns an {@link ArrayList< Movie >}
      */
-    public static ArrayList<Movie> extractJSONResponse(String jsonResponse) {
+    static ArrayList<Movie> extractJSONResponse(String jsonResponse) {
         ArrayList<Movie> movieNames = new ArrayList<>();
         try {
             JSONObject response = new JSONObject(jsonResponse);
@@ -137,7 +155,7 @@ public class NetworkUtils {
         return movieNames;
     }
 
-    public static ArrayList<String> extractVideosJSONResponse(String jsonResponse){
+    static ArrayList<String> extractVideosJSONResponse(String jsonResponse){
         ArrayList<String> videoKeys = new ArrayList<>();
         try {
             JSONObject response = new JSONObject(jsonResponse);
@@ -156,6 +174,22 @@ public class NetworkUtils {
         }
         return videoKeys;
     }
+
+    static ArrayList<String> extractReviewsJSONResponse(String jsonResponse){
+        ArrayList<String> reviews = new ArrayList<>();
+        try {
+            JSONObject response = new JSONObject(jsonResponse);
+            JSONArray results = response.getJSONArray("results");
+            for(int i = 0; i < results.length(); i++) {
+                JSONObject result = (JSONObject) results.get(i);
+                reviews.add(result.getString("content"));
+            }
+        } catch (JSONException e){
+            Log.e(TAG, "JSON Error: " + e.getMessage());
+        }
+        return reviews;
+    }
+
     /**
      * @param context context from where it is called
      * @return whether the device is online or not

@@ -91,10 +91,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:paddingRight="10dp"
             android:paddingLeft="10dp"
-            android:text="@string/trailers" />
+            android:paddingRight="10dp"
+            android:text="@string/trailers"
+            android:textSize="24sp" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_trailers"
@@ -102,5 +102,22 @@
             android:layout_height="match_parent"
             android:paddingLeft="20dp"
             android:paddingRight="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/reviews"
+            android:textSize="24sp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp" />
+
+
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
