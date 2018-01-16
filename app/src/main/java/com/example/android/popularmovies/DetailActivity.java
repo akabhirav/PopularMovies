@@ -10,10 +10,8 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +24,8 @@ import com.example.android.popularmovies.utilities.TrailersLoader;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import static com.example.android.popularmovies.data.MoviesContract.MovieEntry;
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>> {
 
@@ -59,13 +59,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 final Uri movieUri = MoviesContract.MovieEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
                 Cursor cursor = getContentResolver().query(movieUri, null, null, null, null);
                 isFavourite = cursor != null && cursor.getCount() == 1;
-                if (isFavourite) {
-                    mMarkFavourite.setBackgroundResource(android.R.color.black);
-                    mMarkFavourite.setTextColor(getResources().getColor(android.R.color.white));
-                } else {
-                    mMarkFavourite.setBackgroundResource(android.R.color.darker_gray);
-                    mMarkFavourite.setTextColor(getResources().getColor(android.R.color.black));
-                }
+                setFavouriteView();
                 mMarkFavourite.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -80,23 +74,33 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
-    private void toggleFavourite(Movie movie) {
-        final Uri movieUri = MoviesContract.MovieEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
-        Cursor cursor = getContentResolver().query(movieUri, null, null, null, null);
-        isFavourite = cursor != null && cursor.getCount() == 1;
-        if (!isFavourite) {
-            ContentValues values = new ContentValues();
-            values.put(MoviesContract.MovieEntry.COLUMN_TMDB_ID, movie.getId());
-            getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, values);
-            isFavourite = true;
+    private void setFavouriteView() {
+        if (isFavourite) {
             mMarkFavourite.setBackgroundResource(android.R.color.black);
             mMarkFavourite.setTextColor(getResources().getColor(android.R.color.white));
         } else {
-            getContentResolver().delete(movieUri, null, null);
-            isFavourite = false;
             mMarkFavourite.setBackgroundResource(android.R.color.darker_gray);
             mMarkFavourite.setTextColor(getResources().getColor(android.R.color.black));
         }
+    }
+
+    private void toggleFavourite(Movie movie) {
+        final Uri movieUri = MoviesContract.MovieEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
+        if (!isFavourite) {
+            ContentValues values = new ContentValues();
+            values.put(MovieEntry.COLUMN_TMDB_ID, movie.getId());
+            values.put(MovieEntry.COLUMN_TITLE, movie.getTitle());
+            values.put(MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+            values.put(MovieEntry.COLUMN_RATING, movie.getVoteAverage());
+            values.put(MovieEntry.COLUMN_IMAGE, movie.getImageUrl());
+            values.put(MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+            getContentResolver().insert(MovieEntry.CONTENT_URI, values);
+            isFavourite = true;
+        } else {
+            getContentResolver().delete(movieUri, null, null);
+            isFavourite = false;
+        }
+        setFavouriteView();
     }
 
 
@@ -131,7 +135,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
-        if(loader instanceof TrailersLoader){
+        if (loader instanceof TrailersLoader) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mTrailersRecyclerView.setLayoutManager(layoutManager);
             mTrailersRecyclerView.setHasFixedSize(true);
