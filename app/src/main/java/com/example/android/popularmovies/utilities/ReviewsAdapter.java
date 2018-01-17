@@ -21,7 +21,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
     public ReviewsAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+        View view = layoutInflater.inflate(R.layout.review_list_layout, parent, false);
         return new ReviewsAdapter.ReviewsAdapterViewHolder(view);
     }
 
@@ -31,7 +31,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
         if(review.length() > 200){
             review = review.substring(0, 200) + "...";
         }
-        holder.mText.setText(review);
+        holder.mReview.setText(review);
+        if(position + 1 == reviews.size()) holder.separator.setVisibility(View.GONE);
     }
 
     @Override
@@ -42,11 +43,13 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
 
     class ReviewsAdapterViewHolder extends RecyclerView.ViewHolder{
 
-        TextView mText;
+        TextView mReview;
+        View separator;
 
         ReviewsAdapterViewHolder(View itemView) {
             super(itemView);
-            mText = itemView.findViewById(android.R.id.text1);
+            mReview = itemView.findViewById(R.id.tv_review);
+            separator = itemView.findViewById(R.id.v_review_separator);
         }
     }
 }

@@ -32,7 +32,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     public void onBindViewHolder(TrailerAdapterViewHolder holder, int position) {
         holder.mTrailerTextView.setText(String.format("Trailer %s", position + 1));
         holder.mTrailerTextView.setTag(position);
-
+        if(position + 1 == videoIds.size()) holder.separator.setVisibility(View.GONE);
     }
 
     @Override
@@ -43,6 +43,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     class TrailerAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTrailerTextView;
+        private View separator;
         Context context;
 
         TrailerAdapterViewHolder(View itemView) {
@@ -50,6 +51,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
             itemView.setOnClickListener(this);
             context = itemView.getContext();
             mTrailerTextView = itemView.findViewById(R.id.tv_trailer);
+            separator = itemView.findViewById(R.id.v_trailer_separator);
         }
 
         @Override

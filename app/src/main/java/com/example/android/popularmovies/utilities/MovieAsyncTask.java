@@ -3,7 +3,7 @@ package com.example.android.popularmovies.utilities;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.android.popularmovies.Movie;
+import com.example.android.popularmovies.data.Movie;
 
 import java.io.IOException;
 import java.net.URL;

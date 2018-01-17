@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.data.MoviesContract;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 import com.example.android.popularmovies.utilities.ReviewsAdapter;
@@ -27,9 +28,10 @@ import java.util.ArrayList;
 
 import static com.example.android.popularmovies.data.MoviesContract.MovieEntry;
 
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>> {
+public class DetailActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<ArrayList<String>> {
 
-    TextView mMovieTitleTextView, mRatingTextView, mOverviewTextView, mReleaseYear;
+    TextView mMovieTitleTextView, mRatingTextView, mOverviewTextView, mReleaseYear, mSeeMore;
     ImageView mMoviePosterImageView;
     Button mMarkFavourite;
     Boolean isFavourite;
@@ -51,6 +53,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mMarkFavourite = findViewById(R.id.b_favourite);
         mTrailersRecyclerView = findViewById(R.id.rv_trailers);
         mReviewsRecyclerView = findViewById(R.id.rv_reviews);
+        mSeeMore = findViewById(R.id.tv_review_see_more);
         Intent callerIntent = getIntent();
         if (callerIntent.hasExtra("movie")) {
             final Movie movie = callerIntent.getParcelableExtra("movie");
@@ -76,11 +79,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     private void setFavouriteView() {
         if (isFavourite) {
-            mMarkFavourite.setBackgroundResource(android.R.color.black);
+            mMarkFavourite.setBackgroundResource(R.color.colorAccent);
             mMarkFavourite.setTextColor(getResources().getColor(android.R.color.white));
+            mMarkFavourite.setText(R.string.marked_favourites);
         } else {
             mMarkFavourite.setBackgroundResource(android.R.color.darker_gray);
             mMarkFavourite.setTextColor(getResources().getColor(android.R.color.black));
+            mMarkFavourite.setText(R.string.mark_as_favourite);
         }
     }
 
@@ -125,8 +130,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case TRAILER_LOADER_ID:
+                findViewById(R.id.pb_trailers_loader).setVisibility(View.VISIBLE);
                 return new TrailersLoader(this, args.getInt("movie_id"));
             case REVIEWS_LOADER_ID:
+                findViewById(R.id.pb_reviews_loader).setVisibility(View.VISIBLE);
                 return new ReviewsLoader(this, args.getInt("movie_id"));
             default:
                 return null;
@@ -136,15 +143,19 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
         if (loader instanceof TrailersLoader) {
+            findViewById(R.id.pb_trailers_loader).setVisibility(View.GONE);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mTrailersRecyclerView.setLayoutManager(layoutManager);
             mTrailersRecyclerView.setHasFixedSize(true);
+            if (data.size() != 0) findViewById(R.id.tv_trailer_heading).setVisibility(View.VISIBLE);
             mTrailersAdapter = new TrailerAdapter(data);
             mTrailersRecyclerView.setAdapter(mTrailersAdapter);
         } else {
+            findViewById(R.id.pb_reviews_loader).setVisibility(View.GONE);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mReviewsRecyclerView.setLayoutManager(layoutManager);
             mReviewsRecyclerView.setHasFixedSize(true);
+            if (data.size() != 0) findViewById(R.id.tv_reviews_heading).setVisibility(View.VISIBLE);
             mReviewsAdapter = new ReviewsAdapter(data);
             mReviewsRecyclerView.setAdapter(mReviewsAdapter);
         }

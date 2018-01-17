@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.data;
 
 
 import android.os.Parcel;
@@ -57,35 +57,35 @@ public class Movie implements Parcelable {
     /**
      * @return unique image url to append
      * */
-    String getImageUrl() {
+    public String getImageUrl() {
         return imageUrl;
     }
 
     /**
      * @return unique image url to append
      * */
-    String getTitle() {
+    public String getTitle() {
         return title;
     }
 
     /**
      * @return rating for the movie
      * */
-    Double getVoteAverage() {
+    public Double getVoteAverage() {
         return voteAverage;
     }
 
     /**
      * @return synopsis for the movie
      * */
-    String getOverview() {
+    public String getOverview() {
         return overview;
     }
 
     /**
      * @return release date for the movie
      * */
-    String getReleaseDate() {
+    public String getReleaseDate() {
         return releaseDate;
     }
 

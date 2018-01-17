@@ -1,8 +1,5 @@
 package com.example.android.popularmovies;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.nfc.cardemulation.OffHostApduService;
 import android.support.v4.app.LoaderManager;
 import android.content.Intent;
 import android.support.v4.content.Loader;
@@ -21,6 +18,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.data.MoviesContract;
 import com.example.android.popularmovies.utilities.MovieAsyncTask;
 import com.example.android.popularmovies.utilities.MovieCursorLoader;
@@ -28,7 +26,6 @@ import com.example.android.popularmovies.utilities.NetworkUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements
         MoviesAdapter.MoviesAdapterOnClickHandler,

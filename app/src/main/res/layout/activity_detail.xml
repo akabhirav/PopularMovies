@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:background="#009688"
+            android:background="@color/colorAccent"
             android:padding="20dp">
 
             <TextView
@@ -74,6 +74,8 @@
                     android:id="@+id/b_favourite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="10dp"
                     android:text="@string/mark_as_favourite" />
             </LinearLayout>
         </LinearLayout>
@@ -88,36 +90,77 @@
             android:textSize="18sp"
             tools:text="Overview" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/darker_gray" />
+
         <TextView
+            android:id="@+id/tv_trailer_heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="@string/trailers"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/pb_trailers_loader"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_trailers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp" />
+            android:paddingBottom="20dp" />
 
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/reviews"
-            android:textSize="24sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_reviews_heading"
+                android:layout_width="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/reviews"
+                android:textSize="24sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:id="@+id/tv_review_see_more"
+                android:visibility="gone"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/see_more"
+                android:textColor="@android:color/holo_blue_dark" />
+        </RelativeLayout>
+
+
+        <ProgressBar
+            android:id="@+id/pb_reviews_loader"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_reviews"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp" />
-
-
+            android:paddingBottom="20dp" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

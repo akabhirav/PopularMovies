@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.android.popularmovies.Constants;
-import com.example.android.popularmovies.Movie;
+import com.example.android.popularmovies.data.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,11 +23,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import static com.example.android.popularmovies.Constants.PATH_VIDEOS;
-
 public class NetworkUtils {
     private static final String TAG = "NetworkUtils";
-    static final String BAD_RESPONSE = "BAD_RESPONSE";
+    private static final String BAD_RESPONSE = "BAD_RESPONSE";
 
     /**
      * Method that returns the url for fetching a list of movies from tmdb
@@ -58,7 +56,13 @@ public class NetworkUtils {
         return "https://image.tmdb.org/t/p/w500/" + imageCode;
     }
 
-    public static URL buildTrailerUrl(int movieId) {
+    /**
+     * Build url for trailers of a movie
+     *
+     * @param movieId id of the movie
+     * @return {@link URL} url for trailers of a movie
+     */
+    static URL buildTrailerUrl(int movieId) {
         Uri.Builder builder = new Uri.Builder();
         builder
                 .scheme(Constants.HTTPS)
@@ -76,7 +80,13 @@ public class NetworkUtils {
         return url;
     }
 
-    public static URL buildReviewUrl(int movieId) {
+    /**
+     * Build url for reviews of a movie
+     *
+     * @param movieId id of the movie
+     * @return {@link URL} url for reviews of a movie
+     */
+    static URL buildReviewUrl(int movieId) {
         Uri.Builder builder = new Uri.Builder();
         builder
                 .scheme(Constants.HTTPS)
@@ -155,6 +165,12 @@ public class NetworkUtils {
         return movieNames;
     }
 
+    /**
+     * Method to extract youtube video ids from trailers url
+     *
+     * @param jsonResponse json response from http request
+     * @return returns an {@link ArrayList<String>} list of video ids
+     */
     static ArrayList<String> extractVideosJSONResponse(String jsonResponse) {
         ArrayList<String> videoKeys = new ArrayList<>();
         try {
@@ -175,6 +191,12 @@ public class NetworkUtils {
         return videoKeys;
     }
 
+    /**
+     * Method for extracting reviews from json response
+     *
+     * @param jsonResponse json response from http request
+     * @return {@link ArrayList<String>} reviews for a movie
+     */
     static ArrayList<String> extractReviewsJSONResponse(String jsonResponse) {
         ArrayList<String> reviews = new ArrayList<>();
         try {
