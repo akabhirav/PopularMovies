@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.utilities;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,6 +6,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.example.android.popularmovies.Constants;
+import com.example.android.popularmovies.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,7 +23,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-class NetworkUtils {
+import static com.example.android.popularmovies.Constants.PATH_VIDEOS;
+
+public class NetworkUtils {
     private static final String TAG = "NetworkUtils";
     static final String BAD_RESPONSE = "BAD_RESPONSE";
 
@@ -30,7 +35,7 @@ class NetworkUtils {
      * @param sortType type of sorting with which to make the URL
      * @return final url
      */
-    static URL buildUrl(String sortType, int pageNo) {
+    public static URL buildUrl(String sortType, int pageNo) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(Constants.HTTPS).path(Constants.BASE_URL).appendPath(sortType).appendQueryParameter("api_key", Constants.API_KEY).appendQueryParameter("page", String.valueOf(pageNo));
         Uri uri = builder.build();
@@ -49,8 +54,44 @@ class NetworkUtils {
      * @param imageCode unique image code from tmdb
      * @return full image url
      */
-    static String buildImageURL(String imageCode) {
+    public static String buildImageURL(String imageCode) {
         return "https://image.tmdb.org/t/p/w500/" + imageCode;
+    }
+
+    public static URL buildTrailerUrl(int movieId) {
+        Uri.Builder builder = new Uri.Builder();
+        builder
+                .scheme(Constants.HTTPS)
+                .path(Constants.BASE_URL)
+                .appendPath(String.valueOf(movieId))
+                .appendPath(Constants.PATH_VIDEOS)
+                .appendQueryParameter("api_key", Constants.API_KEY);
+        Uri uri = builder.build();
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "MalformedURL: " + e.toString());
+        }
+        return url;
+    }
+
+    public static URL buildReviewUrl(int movieId) {
+        Uri.Builder builder = new Uri.Builder();
+        builder
+                .scheme(Constants.HTTPS)
+                .path(Constants.BASE_URL)
+                .appendPath(String.valueOf(movieId))
+                .appendPath(Constants.PATH_REVIEWS)
+                .appendQueryParameter("api_key", Constants.API_KEY);
+        Uri uri = builder.build();
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "MalformedURL: " + e.toString());
+        }
+        return url;
     }
 
     /**
@@ -114,11 +155,46 @@ class NetworkUtils {
         return movieNames;
     }
 
+    static ArrayList<String> extractVideosJSONResponse(String jsonResponse) {
+        ArrayList<String> videoKeys = new ArrayList<>();
+        try {
+            JSONObject response = new JSONObject(jsonResponse);
+            JSONArray results = response.getJSONArray("results");
+            for (int i = 0; i < results.length(); i++) {
+                JSONObject result = (JSONObject) results.get(i);
+
+                String site = result.getString("site");
+                switch (site) {
+                    case "YouTube":
+                        videoKeys.add(result.getString("key"));
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON Error: " + e.getMessage());
+        }
+        return videoKeys;
+    }
+
+    static ArrayList<String> extractReviewsJSONResponse(String jsonResponse) {
+        ArrayList<String> reviews = new ArrayList<>();
+        try {
+            JSONObject response = new JSONObject(jsonResponse);
+            JSONArray results = response.getJSONArray("results");
+            for (int i = 0; i < results.length(); i++) {
+                JSONObject result = (JSONObject) results.get(i);
+                reviews.add(result.getString("content"));
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON Error: " + e.getMessage());
+        }
+        return reviews;
+    }
+
     /**
      * @param context context from where it is called
      * @return whether the device is online or not
      */
-    static boolean isOnline(Context context) {
+    public static boolean isOnline(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

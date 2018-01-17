@@ -12,12 +12,21 @@
     <string-array name="pref_sort_type_titles">
         <item>Popularity</item>
         <item>Top Rated</item>
+        <item>Favourites</item>
     </string-array>
 
     <string-array name="pref_sort_type_values">
         <item>popular</item>
         <item>top_rated</item>
+        <item>@string/favourites</item>
     </string-array>
 
+    <string name="favourites">favourites</string>
+
     <string name="pref_sort_type_default_value">popular</string>
+    <string name="mark_as_favourite">Mark as favourite</string>
+    <string name="play_trailer">Play trailer</string>
+    <string name="trailers">Trailers</string>
+    <string name="reviews">Reviews</string>
+    <string name="offline_message">Looks like you are offline, here are your favourite movies. Get back online to see more</string>
 </resources>

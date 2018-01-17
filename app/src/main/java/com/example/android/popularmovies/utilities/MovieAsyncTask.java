@@ -1,13 +1,15 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.utilities;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.android.popularmovies.Movie;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-class MovieAsyncTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
+public class MovieAsyncTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
     private MovieAsyncTaskActivityStates state;
 
     /**
@@ -16,7 +18,7 @@ class MovieAsyncTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
      * @param state {@link MovieAsyncTaskActivityStates} methods that make activity side changes on
      *              changes in async task
      */
-    MovieAsyncTask(MovieAsyncTaskActivityStates state) {
+    public MovieAsyncTask(MovieAsyncTaskActivityStates state) {
         this.state = state;
     }
 
@@ -24,7 +26,7 @@ class MovieAsyncTask extends AsyncTask<URL, Void, ArrayList<Movie>> {
      * Interface for managing changes in activity during different steps
      * of the async task
      */
-    interface MovieAsyncTaskActivityStates {
+    public interface MovieAsyncTaskActivityStates {
 
         /**
          * Method to hide the error view and show the view that will contain the movie list
