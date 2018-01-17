@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements
     int spanCount; // number of columns in grid layout
     private ProgressBar mLoadingIndicator; // loading indicator that is visible when data is loading
     private final static int FAVOURITE_LOADER_ID = 3;
+    private static String sortBy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,17 @@ public class MainActivity extends AppCompatActivity implements
         position = savedInstanceState.getInt("position");
         int finalPosition = position - spanCount;
         mMoviesRecyclerView.smoothScrollToPosition(finalPosition < 0 ? 0 : finalPosition);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String newSort = sharedPrefs.getString(getString(R.string.pref_sort_type_key), getString(R.string.pref_sort_type_default_value));
+        if (!sortBy.equals(newSort)) {
+            mMoviesAdapter.flushData();
+            loadMovies(1);
+        }
     }
 
     /**
@@ -137,12 +149,12 @@ public class MainActivity extends AppCompatActivity implements
     void loadMovies(int pageNo) {
         isLoading = true;
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String sortBy = sharedPrefs.getString(getString(R.string.pref_sort_type_key), getString(R.string.pref_sort_type_default_value));
+        sortBy = sharedPrefs.getString(getString(R.string.pref_sort_type_key), getString(R.string.pref_sort_type_default_value));
         URL url = NetworkUtils.buildUrl(sortBy, pageNo);
         if (NetworkUtils.isOnline(this) && !sortBy.equals(getString(R.string.favourites))) {
             hideOfflineMessage();
             new MovieAsyncTask(this).execute(url);
-        } else if(sortBy.equals(getString(R.string.favourites))){
+        } else if (sortBy.equals(getString(R.string.favourites))) {
             getSupportLoaderManager().initLoader(FAVOURITE_LOADER_ID, null, this);
         } else {
             if (pageNo == 1) {
