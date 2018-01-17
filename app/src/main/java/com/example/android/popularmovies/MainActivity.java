@@ -28,6 +28,7 @@ import com.example.android.popularmovies.utilities.NetworkUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements
         MoviesAdapter.MoviesAdapterOnClickHandler,
@@ -141,27 +142,29 @@ public class MainActivity extends AppCompatActivity implements
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String sortBy = sharedPrefs.getString(getString(R.string.pref_sort_type_key), getString(R.string.pref_sort_type_default_value));
         URL url = NetworkUtils.buildUrl(sortBy, pageNo);
-        if (NetworkUtils.isOnline(this)) {
+        if (NetworkUtils.isOnline(this) && !sortBy.equals(getString(R.string.favourites))) {
             hideOfflineMessage();
             new MovieAsyncTask(this).execute(url);
+        } else if(sortBy.equals(getString(R.string.favourites))){
+            getSupportLoaderManager().initLoader(FAVOURITE_LOADER_ID, null, this);
         } else {
-            if(pageNo == 1){
-                getSupportLoaderManager().initLoader(FAVOURITE_LOADER_ID, null, this);
+            if (pageNo == 1) {
                 showOfflineMessage();
+                getSupportLoaderManager().initLoader(FAVOURITE_LOADER_ID, null, this);
             }
         }
     }
 
-    void hideOfflineMessage(){
-        TextView offlineMessage =  findViewById(R.id.tv_offline);
+    void hideOfflineMessage() {
+        TextView offlineMessage = findViewById(R.id.tv_offline);
         offlineMessage.setVisibility(View.GONE);
-        mMoviesRecyclerView.setPadding(0 , 0, 0 , 0);
+        mMoviesRecyclerView.setPadding(0, 0, 0, 0);
     }
 
-    void showOfflineMessage(){
-        TextView offlineMessage =  findViewById(R.id.tv_offline);
+    void showOfflineMessage() {
+        TextView offlineMessage = findViewById(R.id.tv_offline);
         offlineMessage.setVisibility(View.VISIBLE);
-        mMoviesRecyclerView.setPadding(0 , 100, 0 , 0);
+        mMoviesRecyclerView.setPadding(0, 100, 0, 0);
     }
 
     @Override
@@ -206,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ArrayList<Movie> arrayList =new ArrayList<>();
+        ArrayList<Movie> arrayList = new ArrayList<>();
         int length = data.getCount();
         for (int i = 0; i < length; i++) {
             data.moveToPosition(i);
@@ -219,9 +222,8 @@ public class MainActivity extends AppCompatActivity implements
             Movie movie = new Movie(id, title, url, releaseDate, overview, rating);
             arrayList.add(movie);
         }
-        if(mMoviesAdapter.getMoviesData() == null){
-            mMoviesAdapter.setOrAddMoviesData(arrayList);
-        }
+        mMoviesAdapter.flushData();
+        mMoviesAdapter.setOrAddMoviesData(arrayList);
     }
 
     @Override

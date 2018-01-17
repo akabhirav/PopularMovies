@@ -65,6 +65,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         notifyDataSetChanged();
     }
 
+    void flushData(){
+        this.mMoviesData = null;
+        notifyDataSetChanged();
+    }
+
     /**
      * Gets movies that are there in adapter
      *

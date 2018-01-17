@@ -132,7 +132,7 @@ public class NetworkUtils {
      * Method to extract a list of movies with only id, title, and image url from json
      *
      * @param jsonResponse json string which contains the data
-     * @return returns an {@link ArrayList< Movie >}
+     * @return returns an {@link ArrayList<Movie>}
      */
     static ArrayList<Movie> extractJSONResponse(String jsonResponse) {
         ArrayList<Movie> movieNames = new ArrayList<>();
@@ -155,36 +155,36 @@ public class NetworkUtils {
         return movieNames;
     }
 
-    static ArrayList<String> extractVideosJSONResponse(String jsonResponse){
+    static ArrayList<String> extractVideosJSONResponse(String jsonResponse) {
         ArrayList<String> videoKeys = new ArrayList<>();
         try {
             JSONObject response = new JSONObject(jsonResponse);
             JSONArray results = response.getJSONArray("results");
-            for(int i = 0; i < results.length(); i++) {
+            for (int i = 0; i < results.length(); i++) {
                 JSONObject result = (JSONObject) results.get(i);
 
                 String site = result.getString("site");
-                switch (site){
+                switch (site) {
                     case "YouTube":
                         videoKeys.add(result.getString("key"));
                 }
             }
-        } catch (JSONException e){
+        } catch (JSONException e) {
             Log.e(TAG, "JSON Error: " + e.getMessage());
         }
         return videoKeys;
     }
 
-    static ArrayList<String> extractReviewsJSONResponse(String jsonResponse){
+    static ArrayList<String> extractReviewsJSONResponse(String jsonResponse) {
         ArrayList<String> reviews = new ArrayList<>();
         try {
             JSONObject response = new JSONObject(jsonResponse);
             JSONArray results = response.getJSONArray("results");
-            for(int i = 0; i < results.length(); i++) {
+            for (int i = 0; i < results.length(); i++) {
                 JSONObject result = (JSONObject) results.get(i);
                 reviews.add(result.getString("content"));
             }
-        } catch (JSONException e){
+        } catch (JSONException e) {
             Log.e(TAG, "JSON Error: " + e.getMessage());
         }
         return reviews;
