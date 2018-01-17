@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar mLoadingIndicator; // loading indicator that is visible when data is loading
     private final static int FAVOURITE_LOADER_ID = 3;
     private static String sortBy;
+    private static final String RECYCLER_STATE = "RECYCLER_STATE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +76,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("position", position);
         outState.putParcelableArrayList("movies", mMoviesAdapter.getMoviesData());
+        outState.putParcelable(RECYCLER_STATE, mMoviesRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        position = savedInstanceState.getInt("position");
-        int finalPosition = position - spanCount;
-        mMoviesRecyclerView.smoothScrollToPosition(finalPosition < 0 ? 0 : finalPosition);
+        mMoviesRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_STATE));
     }
 
     @Override

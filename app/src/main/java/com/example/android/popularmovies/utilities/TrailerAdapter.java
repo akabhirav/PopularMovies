@@ -59,7 +59,9 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
             int position = (int) mTrailerTextView.getTag();
             Intent webIntent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse("http://www.youtube.com/watch?v=" + videoIds.get(position)));
-            context.startActivity(webIntent);
+            if(webIntent.resolveActivity(context.getPackageManager()) != null){
+                context.startActivity(webIntent);
+            }
         }
     }
 }

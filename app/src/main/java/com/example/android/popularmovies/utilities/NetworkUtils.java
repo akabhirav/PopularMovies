@@ -115,6 +115,8 @@ public class NetworkUtils {
     static String getResponseFromHttpUrl(URL url) throws IOException {
         String jsonResponse = null;
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        urlConnection.setConnectTimeout(5000);
+        urlConnection.setReadTimeout(2000);
         try {
             if (urlConnection.getResponseCode() == 200) {
                 InputStream in = urlConnection.getInputStream();
